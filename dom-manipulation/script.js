@@ -45,4 +45,4 @@ function addQuote() {
 document.getElementById('newQuote').addEventListener('click', showRandomQuote);
 
 // Display a random quote when the page loads
-showRandomQuote();
+showRandomQuote().innerHTML=""
