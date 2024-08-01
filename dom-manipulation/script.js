@@ -25,6 +25,8 @@ function addQuote() {
     
     const newQuoteText = quoteTextInput.value.trim();
     const newCategory = categoryInput.value.trim();
+    const createElement = "createElement"
+    const appendChild = "appendChild"
 
     if (newQuoteText && newCategory) {
         // Add the new quote to the quotes array
