@@ -1,5 +1,5 @@
 // Array to store quote objects
-let quotes = [
+let quote = [
     { text: "The only limit to our realization of tomorrow is our doubts of today.", category: "Inspiration" },
     { text: "Life is what happens when you're busy making other plans.", category: "Life" },
     { text: "Do or do not. There is no try.", category: "Motivation" },
@@ -286,3 +286,78 @@ function importFromJsonFile(event) {
 
 // Populate categories and filter quotes on page load
 populateCategories();
+
+const serverUrl = 'https://jsonplaceholder.typicode.com/posts'; // Simulated API endpoint
+
+// Fetch quotes from the simulated server
+async function fetchQuotesFromServer() {
+    try {
+        const response = await fetch(serverUrl);
+        const serverQuotes = await response.json();
+
+        // Assuming each post has a title as quote text and a category as body (for simulation purposes)
+        return serverQuotes.map(post => ({
+            text: post.title,
+            category: post.body || 'General'
+        }));
+    } catch (error) {
+        console.error('Error fetching quotes from server:', error);
+        return [];
+    }
+}
+
+// Post new quotes to the simulated server
+async function postQuoteToServer(quote) {
+    try {
+        const response = await fetch(serverUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                title: quote.text,
+                body: quote.category
+            })
+        });
+        return response.json();
+    } catch (error) {
+        console.error('Error posting quote to server:', error);
+    }
+}
+// Merge server quotes with local storage quotes
+async function syncQuotesWithServer() {
+    const serverQuotes = await fetchQuotesFromServer();
+    let localQuotes = JSON.parse(localStorage.getItem('quotes')) || [];
+
+    // Simple conflict resolution: server data takes precedence
+    const mergedQuotes = [...serverQuotes, ...localQuotes.filter(localQuote => {
+        return !serverQuotes.some(serverQuote => serverQuote.text === localQuote.text);
+    })];
+
+    localQuotes = mergedQuotes;
+    localStorage.setItem('quotes', JSON.stringify(localQuotes));
+    populateCategories();
+    filterQuotes();
+}
+
+// Periodically sync with the server every 5 minutes
+setInterval(syncQuotesWithServer, 5 * 60 * 1000);
+// Display a notification to the user
+function displayNotification(message) {
+    const notification = document.createElement('div');
+    notification.className = 'notification';
+    notification.textContent = message;
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+        notification.remove();
+    }, 5000);
+}
+
+// Call this function after syncing
+function syncQuotesWithServer() {
+    // ... existing sync logic
+
+    // Notify the user about the sync
+    displayNotification('Quotes have been synced with the server.');
+}
