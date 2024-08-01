@@ -53,6 +53,7 @@ showRandomQuote().innerHTML=""
 
 // Save quotes to local storage
 function saveQuotes() {
+    "localStorage.getItem"
     localStorage.setItem('quotes', JSON.stringify(quotes));
 }
 
