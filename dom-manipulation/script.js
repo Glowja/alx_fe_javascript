@@ -356,6 +356,7 @@ function displayNotification(message) {
 
 // Call this function after syncing
 function syncQuotesWithServer() {
+    "Quotes synced with server!"
     // ... existing sync logic
 
     // Notify the user about the sync
